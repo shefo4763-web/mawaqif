@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; img-src 'self' data: https://*.supabase.co; connect-src https://*.supabase.co wss://*.supabase.co; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مواقف مصر</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--tx:#14213d;--mut:#667085;--pr:#0a7d4f;--prt:#fff;--bd:#e0e4e9;--dn:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1419;--card:#1a212a;--tx:#eef1f5;--mut:#9aa5b1;--pr:#2bbf85;--prt:#04210f;--bd:#2a333d;--dn:#ff7a6b}}
+:root[data-theme="dark"]{--bg:#0f1419;--card:#1a212a;--tx:#eef1f5;--mut:#9aa5b1;--pr:#2bbf85;--prt:#04210f;--bd:#2a333d;--dn:#ff7a6b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.6}
+main{max-width:640px;margin:0 auto;padding:12px}
+header{display:flex;justify-content:space-between;align-items:center;padding:8px 2px}
+h1{font-size:20px;margin:0;color:var(--pr)}h2{font-size:17px;margin:14px 0 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}
+.tabs{display:flex;gap:6px;margin:8px 0}
+.tabs button{flex:1}
+button,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:9px 12px;cursor:pointer}
+button.p{background:var(--pr);color:var(--prt);border-color:var(--pr);font-weight:700}
+button.on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+button.d{color:var(--dn);border-color:var(--dn)}
+label{display:block;font-size:13px;color:var(--mut);margin:8px 0 3px}
+input,select{width:100%;font:inherit;padding:9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
+.row{display:flex;gap:10px;align-items:center}.sp{justify-content:space-between}
+.av{width:44px;height:44px;border-radius:50%;background:var(--pr);color:var(--prt);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+img.av{object-fit:cover}
+.mut{color:var(--mut);font-size:13px}.tag{background:var(--bd);border-radius:20px;padding:1px 9px;font-size:12px}
+.tk{border:2px dashed var(--pr);text-align:center}.code{font-size:26px;letter-spacing:3px;font-weight:700;color:var(--pr);direction:ltr}
+.note{background:var(--bd);border-radius:10px;padding:8px;font-size:12px;color:var(--mut)}
+.err{background:var(--bd);color:var(--dn);border-radius:10px;padding:8px;margin-bottom:8px;font-weight:700}
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.55);display:flex;padding:calc(16px + env(safe-area-inset-top,0px)) 16px;z-index:8;overflow:auto}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 16px;border-radius:20px;display:none;z-index:9}
+</style></head><body><main id="app"></main><div id="toast"></div>
+<noscript>يلزم تفعيل JavaScript</noscript>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const ST=['موقف عبود - القاهرة','موقف المنيب - الجيزة','موقف ألماظة - القاهرة','موقف محطة مصر - الإسكندرية','موقف سيدي جابر - الإسكندرية','موقف المنصورة','موقف طنطا','موقف الإسماعيلية','موقف السويس','موقف بورسعيد','موقف الفيوم','موقف بني سويف','موقف المنيا','موقف أسيوط','موقف سوهاج','موقف قنا','موقف الأقصر','موقف أسوان','موقف الغردقة','موقف شرم الشيخ'];
+ST.push('موقف حلوان - القاهرة','موقف التجمع الخامس - القاهرة','موقف 6 أكتوبر - الجيزة','موقف أوسيم - الجيزة','موقف الصف - الجيزة','موقف العياط - الجيزة','موقف الحوامدية - الجيزة','موقف شبرا الخيمة - القليوبية','موقف بنها - القليوبية','موقف طوخ - القليوبية','موقف العبور - القليوبية','موقف برج العرب - الإسكندرية','موقف أبو قير - الإسكندرية','موقف المحلة الكبرى - الغربية','موقف كفر الزيات - الغربية','موقف زفتى - الغربية','موقف شبين الكوم - المنوفية','موقف منوف - المنوفية','موقف أشمون - المنوفية','موقف دمنهور - البحيرة','موقف كفر الدوار - البحيرة','موقف إيتاي البارود - البحيرة','موقف الزقازيق - الشرقية','موقف بلبيس - الشرقية','موقف العاشر من رمضان - الشرقية','موقف ميت غمر - الدقهلية','موقف المنزلة - الدقهلية','موقف دمياط','موقف كفر الشيخ','موقف دسوق - كفر الشيخ','موقف بيلا - كفر الشيخ','موقف إطسا - الفيوم','موقف سنورس - الفيوم','موقف الواسطي - بني سويف','موقف ببا - بني سويف','موقف مغاغة - المنيا','موقف ملوي - المنيا','موقف سمالوط - المنيا','موقف أبو قرقاص - المنيا','موقف ديروط - أسيوط','موقف منفلوط - أسيوط','موقف أبنوب - أسيوط','موقف أخميم - سوهاج','موقف جرجا - سوهاج','موقف طهطا - سوهاج','موقف نجع حمادي - قنا','موقف دشنا - قنا','موقف قوص - قنا','موقف إسنا - الأقصر','موقف إدفو - أسوان','موقف كوم أمبو - أسوان','موقف رأس غارب - البحر الأحمر','موقف القصير - البحر الأحمر','موقف مرسى مطروح','موقف العريش - شمال سيناء','موقف الخارجة - الوادي الجديد');
+
+const $=i=>document.getElementById(i);
+const SB_URL='https://ybmvoxxcxjjwmshxtjgw.supabase.co',SB_KEY='sb_publishable_UcTUd-hiTqUQbzCx3L1ALw_N6CZosp1';
+const H=36e5,sb=supabase.createClient(SB_URL,SB_KEY);
+let U=null,P=null,view='login',pr='rider',N=[],D={},nch=null,wid=null,lastSend=0;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fd=t=>new Date(t).toLocaleString('ar-EG',{dateStyle:'medium',timeStyle:'short',timeZone:'Africa/Cairo'});
+const toast=m=>{const e=$('toast');e.textContent=m;e.style.display='block';clearTimeout(toast.k);toast.k=setTimeout(()=>e.style.display='none',3200)};
+const ERR={no_seats:'لا توجد مقاعد متاحة',trip_unavailable:'الرحلة لم تعد متاحة',riders_only:'الحجز للركاب فقط',too_late:'لا يمكن الإلغاء قبل الموعد بأقل من 12 ساعة',too_early:'يمكنك بدء الرحلة قبل موعدها بساعة فقط',driver_not_verified:'حسابك لم تتم الموافقة عليه بعد',same_stop:'اختر موقفين مختلفين',past_time:'اختر موعدًا في المستقبل',too_far:'الموعد بعيد جدًا',bad_seats:'عدد المقاعد غير صحيح',too_many_trips:'وصلت للحد الأقصى من الرحلات المجدولة',not_running:'الرحلة غير جارية',already_registered:'الحساب مسجل بالفعل',nid_taken:'تعذّر إنشاء الحساب، تحقق من البيانات','Invalid login credentials':'بيانات الدخول غير صحيحة','Email not confirmed':'فعّل بريدك أولًا من الرسالة التي وصلتك','rate limit':'محاولات كثيرة، حاول بعد قليل','already registered':'هذا البريد مسجل بالفعل'};
+const em=e=>{const m=String(e&&e.message||e||'');if(e&&e.code==='23505')return 'حجزت هذه الرحلة بالفعل';for(const k in ERR)if(m.includes(k))return ERR[k];return 'حدث خطأ، حاول مرة أخرى'};
+const opts=s=>ST.map(x=>`<option ${x===s?'selected':''}>${x}</option>`).join('');
+const pub=p=>sb.storage.from('avatars').getPublicUrl(p).data.publicUrl;
+const av=p=>p&&p.photo_path?`<img class="av" src="${esc(pub(p.photo_path))}" alt="">`:`<span class="av">${esc((p&&p.name||'؟')[0])}</span>`;
+const ph=p=>p&&p.phone?`<div class="mut">📞 <a href="tel:${esc(p.phone)}">${esc(p.phone)}</a></div>`:'';
+const canCancel=t=>new Date(t.depart_at)-Date.now()>=12*H;
+const profs=async ids=>{const o={};ids=[...new Set(ids)].filter(Boolean);if(ids.length){const r=await sb.from('profiles').select('id,name,plate,phone,gender,photo_path').in('id',ids);(r.data||[]).forEach(p=>o[p.id]=p)}return o};
+function imgBlob(file){return new Promise(r=>{if(!file||file.size>8e6||!/^image\//.test(file.type))return r(null);const f=new FileReader();f.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,1000/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(b=>r(b),'image/jpeg',.8)};i.onerror=()=>r(null);i.src=f.result};f.onerror=()=>r(null);f.readAsDataURL(file)})}
+async function up(bucket,tag,file){const b=await imgBlob(file);if(!b)throw new Error('الصورة غير صالحة أو كبيرة جدًا');const path=U.id+'/'+tag+'-'+Date.now()+'.jpg';const r=await sb.storage.from(bucket).upload(path,b,{contentType:'image/jpeg'});if(r.error)throw r.error;return path}
+
+/* ---------- الدخول والبيانات ---------- */
+sb.auth.onAuthStateChange((ev,s)=>{U=s&&s.user||null;setTimeout(boot,0)});
+async function boot(){if(!U){P=null;N=[];stopTrack();if(nch){sb.removeChannel(nch);nch=null}if(view!=='signup')view='login';return render()}
+const r=await sb.from('profiles').select('*').eq('id',U.id).maybeSingle();P=r.data;if(view==='login'||view==='signup')view='main';
+if(P){await loadNotes();subNotes();resumeTrack();await load()}render()}
+async function loadNotes(){const r=await sb.from('notifications').select('*').order('created_at',{ascending:false}).limit(50);N=r.data||[]}
+function subNotes(){if(nch)return;nch=sb.channel('n-'+U.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+U.id},p=>{N.unshift(p.new);toast(p.new.body);try{if(window.Notification&&Notification.permission==='granted')new Notification('مواقف مصر',{body:p.new.body})}catch(_){}refresh()}).subscribe()}
+async function load(){if(!P)return;
+if(P.role==='rider'){
+if(view==='main'){const q=D.q||{};const r=await sb.rpc('search_trips',{p_from:q.from||null,p_to:q.to||null,p_day:q.day||null});D.trips=r.data||[]}
+if(view==='mine'){const r=await sb.from('bookings').select('id,code,status,created_at,trips(id,from_stop,to_stop,depart_at,status,driver_id)').order('created_at',{ascending:false});D.bk=r.data||[];D.pf=await profs(D.bk.map(b=>b.trips&&b.trips.driver_id));D.loc={};const run=D.bk.filter(b=>b.status==='confirmed'&&b.trips&&b.trips.status==='running').map(b=>b.trips.id);if(run.length){const l=await sb.from('trip_locations').select('*').in('trip_id',run);(l.data||[]).forEach(x=>D.loc[x.trip_id]=x)}}
+}else if(view==='mine'){const r=await sb.from('trips').select('*').eq('driver_id',U.id).order('depart_at',{ascending:false});D.mine=r.data||[];D.pax={};if(D.mine.length){const b=await sb.from('bookings').select('id,code,trip_id,rider_id').eq('status','confirmed').in('trip_id',D.mine.map(t=>t.id));D.pf=await profs((b.data||[]).map(x=>x.rider_id));(b.data||[]).forEach(x=>(D.pax[x.trip_id]=D.pax[x.trip_id]||[]).push(x))}}}
+async function go(v){view=v;await load();render()}
+async function refresh(){await load();render()}
+setInterval(()=>{if(P&&P.role==='rider'&&view==='mine'&&!document.hidden&&(D.bk||[]).some(b=>b.status==='confirmed'&&b.trips&&b.trips.status==='running'))refresh()},10000);
+
+/* ---------- تتبع السيارة ---------- */
+function stopTrack(){try{if(wid!==null&&navigator.geolocation)navigator.geolocation.clearWatch(wid)}catch(_){}wid=null}
+function track(id){stopTrack();if(!navigator.geolocation)return;wid=navigator.geolocation.watchPosition(p=>{if(Date.now()-lastSend<5000)return;lastSend=Date.now();sb.rpc('update_location',{p_trip:id,p_lat:+p.coords.latitude.toFixed(5),p_lng:+p.coords.longitude.toFixed(5)})},()=>{},{enableHighAccuracy:true,maximumAge:5000})}
+async function resumeTrack(){if(!P||P.role!=='driver'||wid!==null)return;const r=await sb.from('trips').select('id').eq('driver_id',U.id).eq('status','running').limit(1);if(r.data&&r.data[0])track(r.data[0].id)}
+
+/* ---------- الشاشات ---------- */
+const head=()=>{const n=N.filter(x=>!x.read).length;return `<header><h1>🚌 مواقف مصر</h1><div class="row">${av(P)}<div><b>${esc(P.name)}</b><div class="mut">${P.role==='driver'?'سائق':'راكب'}</div></div><button data-v="notes">🔔${n?' '+n:''}</button><button data-a="out">خروج</button></div></header>`};
+function authView(){const l=view!=='signup';return `<header><h1>🚌 مواقف مصر</h1></header><p class="mut">احجز مقعدك أو اعرض رحلتك بين مواقف السيارات.</p><div class="tabs"><button data-v="login" class="${l?'on':''}">دخول</button><button data-v="signup" class="${l?'':'on'}">حساب جديد</button></div><form class="card" data-f="${l?'login':'signup'}"><label>البريد الإلكتروني</label><input name="email" type="email" autocomplete="email" required><label>كلمة المرور${l?'':' (8 أحرف على الأقل)'}</label><input name="password" type="password" minlength="${l?1:8}" maxlength="64" autocomplete="${l?'current-password':'new-password'}" required><p><button class="p">${l?'دخول':'إنشاء حساب'}</button></p></form>`}
+function profView(){const d=pr==='driver';return `<header><h1>🚌 مواقف مصر</h1><button data-a="out">خروج</button></header><div class="card">أكمل بياناتك لبدء الاستخدام.</div><div class="tabs"><button data-a="pr" data-id="rider" class="${d?'':'on'}">راكب</button><button data-a="pr" data-id="driver" class="${d?'on':''}">سائق</button></div><form class="card" data-f="profile"><label>الاسم بالكامل</label><input name="name" required><label>رقم البطاقة (14 رقم)</label><input name="nid" inputmode="numeric" required><label>رقم الموبايل (يظهر للطرف الآخر بعد الحجز)</label><input name="phone" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX" required>${d?`<label>رقم لوحة السيارة</label><input name="plate" required><label>صورة شخصية</label><input type="file" name="ph" accept="image/*" required><label>صورة البطاقة</label><input type="file" name="idp" accept="image/*" required><label>صورة رخصة القيادة</label><input type="file" name="lic" accept="image/*" required><div class="note">حساب السائق يُفعَّل بعد مراجعة الوثائق.</div>`:`<label>الجنس</label><select name="g"><option>ذكر</option><option>أنثى</option></select><label>صورة شخصية (اختياري)</label><input type="file" name="ph" accept="image/*">`}<p><button class="p">حفظ</button></p></form>`}
+function notesView(){const h=head()+`<div class="tabs"><button data-v="main">رجوع</button><button data-a="perm">تفعيل إشعارات المتصفح</button></div>`+(N.length?N.map(x=>`<div class="card" style="${x.read?'':'border-color:var(--pr)'}">${esc(x.body)}<div class="mut">${fd(x.created_at)}</div></div>`).join(''):`<div class="card mut">لا توجد إشعارات.</div>`);if(N.some(x=>!x.read)){const ids=N.filter(x=>!x.read).map(x=>x.id);N.forEach(x=>x.read=true);sb.from('notifications').update({read:true}).in('id',ids).then(()=>{})}return h}
+function riderView(){const m=view==='mine';let h=head()+`<div class="tabs"><button data-v="main" class="${m?'':'on'}">ابحث عن رحلة</button><button data-v="mine" class="${m?'on':''}">تذاكري</button></div>`;
+if(m){const L=D.bk||[];return h+(L.length?L.map(b=>{const t=b.trips;if(!t)return '';const dr=(D.pf||{})[t.driver_id],ok=b.status==='confirmed',lc=(D.loc||{})[t.id];return `<div class="card tk"><div class="mut">تذكرة ${ok?'':'(ملغاة)'}</div><div class="code">${esc(b.code)}</div><div class="row sp" style="margin-top:8px"><b>${esc(t.from_stop)}</b><span>⟵</span><b>${esc(t.to_stop)}</b></div><div class="mut">${fd(t.depart_at)}</div>${dr?`<div class="row" style="justify-content:center;margin:8px 0">${av(dr)}<div style="text-align:start"><b>${esc(dr.name)}</b><div class="mut">السيارة: ${esc(dr.plate)}</div>${ok?ph(dr):''}</div></div>`:''}${lc?`<div class="card" style="text-align:start"><b>📍 موقع السيارة الآن</b><div class="mut">آخر تحديث: ${fd(lc.updated_at)}</div><a class="btn" style="display:inline-block;margin-top:6px;text-decoration:none;color:inherit" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps?q=${+lc.lat},${+lc.lng}">افتح على الخريطة</a></div>`:''}${ok&&t.status==='scheduled'?`<div class="mut">أظهر هذه التذكرة للسائق</div>${canCancel(t)?`<p><button class="d" data-a="cb" data-id="${b.id}">إلغاء الحجز</button></p>`:''}`:''}</div>`}).join(''):`<div class="card mut">لا توجد حجوزات بعد.</div>`)}
+const q=D.q||{};h+=`<form class="card" data-f="search"><div class="row"><div style="flex:1"><label>من</label><select name="from"><option value="">أي موقف</option>${opts(q.from)}</select></div><div style="flex:1"><label>إلى</label><select name="to"><option value="">أي موقف</option>${opts(q.to)}</select></div></div><label>التاريخ (اختياري)</label><input type="date" name="day" value="${esc(q.day||'')}"><p><button class="p">بحث</button></p></form>`;
+const T=D.trips||[];return h+`<h2>الرحلات المتاحة (${T.length})</h2>`+(T.length?T.map(t=>`<div class="card"><div class="row">${av({name:t.driver_name,photo_path:t.photo_path})}<div><b>${esc(t.driver_name)}</b><div class="mut">السيارة: ${esc(t.plate)}</div></div></div><div class="row sp" style="margin:8px 0"><b>${esc(t.from_stop)}</b><span>⟵</span><b>${esc(t.to_stop)}</b></div><div class="row sp"><span>🕒 ${fd(t.depart_at)}</span><span class="tag">متبقي ${t.seats_left} مقعد</span></div><p><button class="p" data-a="book" data-id="${t.id}">احجز مقعد</button></p></div>`).join(''):`<div class="card mut">لا توجد رحلات مطابقة.</div>`)+`<div class="note">الدفع الإلكتروني سيُفعَّل قريبًا.</div>`}
+function driverView(){let h=head();if(!P.verified)return h+`<div class="card">⏳ حسابك قيد المراجعة. سيتم تفعيله بعد التحقق من الوثائق، وستصلك إشعارات عند ذلك.</div>`;const m=view==='mine';h+=`<div class="tabs"><button data-v="main" class="${m?'':'on'}">رحلة جديدة</button><button data-v="mine" class="${m?'on':''}">رحلاتي وركّابي</button></div>`;
+if(m){const L=D.mine||[];return h+(L.length?L.map(t=>{const px=(D.pax||{})[t.id]||[];return `<div class="card"><div class="row sp"><b>${esc(t.from_stop)} ⟵ ${esc(t.to_stop)}</b>${t.status==='cancelled'?'<span class="tag">ملغاة</span>':t.status==='done'?'<span class="tag">منتهية</span>':t.status==='running'?'<span class="tag">جارية 📍</span>':''}</div><div class="mut">${fd(t.depart_at)} • ${px.length}/${t.seats} راكب</div>${px.map(b=>{const r=(D.pf||{})[b.rider_id];return `<div class="row" style="margin-top:8px">${av(r)}<div><b>${esc(r?r.name:'راكب')}</b><div class="mut">${esc(r?r.gender||'':'')} • تذكرة ${esc(b.code)}</div>${ph(r)}</div></div>`}).join('')}${t.status==='running'?`<p class="row"><button class="p" data-a="end" data-id="${t.id}">إنهاء الرحلة</button><span class="mut">📍 موقعك مُشارك مع الركاب</span></p>`:t.status==='scheduled'?`<p class="row"><button class="p" data-a="start" data-id="${t.id}">ابدأ الرحلة وشارك موقعي</button>${canCancel(t)?`<button class="d" data-a="ct" data-id="${t.id}">إلغاء</button>`:''}</p>`:''}</div>`}).join(''):`<div class="card mut">لم تضف رحلات بعد.</div>`)}
+const dflt=new Date(Date.now()+24*H-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+return h+`<form class="card" data-f="trip"><label>موقف الإقلاع</label><select name="from">${opts()}</select><label>موقف الوصول</label><select name="to">${opts(ST[6])}</select><label>موعد المغادرة</label><input type="datetime-local" name="t" value="${dflt}" required><label>عدد المقاعد (حتى 40)</label><input type="number" name="seats" min="1" max="40" value="4" required><p><button class="p">انشر الرحلة</button></p></form>`}
+function render(){const a=$('app');if(!U)return a.innerHTML=authView();if(!P)return a.innerHTML=profView();a.innerHTML=view==='notes'?notesView():P.role==='rider'?riderView():driverView()}
+
+/* ---------- الأحداث ---------- */
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+if(b.dataset.v){return go(b.dataset.v)}
+const a=b.dataset.a,id=b.dataset.id;if(!a)return;b.disabled=true;
+try{
+if(a==='pr'){pr=id;return render()}
+if(a==='out'){stopTrack();await sb.auth.signOut();view='login';return}
+if(a==='perm'){try{const p=await Notification.requestPermission();toast(p==='granted'?'تم تفعيل الإشعارات':'لم يتم التفعيل')}catch(_){toast('غير مدعوم هنا')}return}
+if(a==='book'){if(!confirm('تأكيد حجز مقعد؟'))return;const r=await sb.rpc('book_seat',{p_trip:id});if(r.error)return toast(em(r.error));toast('تم الحجز ✓');return go('mine')}
+if(a==='cb'){if(!confirm('إلغاء الحجز؟'))return;const r=await sb.rpc('cancel_booking',{p_booking:id});if(r.error)return toast(em(r.error));toast('تم إلغاء الحجز');return refresh()}
+if(a==='ct'){if(!confirm('إلغاء الرحلة وكل حجوزاتها؟'))return;const r=await sb.rpc('cancel_trip',{p_trip:id});if(r.error)return toast(em(r.error));toast('تم إلغاء الرحلة');return refresh()}
+if(a==='start'){if(!navigator.geolocation)return toast('الموقع غير مدعوم');if(!confirm('سيتم مشاركة موقعك مع الركاب الحاجزين حتى تنهي الرحلة. متابعة؟'))return;
+const pos=await new Promise(res=>navigator.geolocation.getCurrentPosition(p=>res(p),()=>res(null),{enableHighAccuracy:true,timeout:15000}));if(!pos)return toast('اسمح بالوصول للموقع من إعدادات المتصفح');
+const r=await sb.rpc('start_trip',{p_trip:id});if(r.error)return toast(em(r.error));track(id);toast('بدأت مشاركة الموقع');return refresh()}
+if(a==='end'){const r=await sb.rpc('end_trip',{p_trip:id});if(r.error)return toast(em(r.error));stopTrack();toast('تم إنهاء الرحلة');return refresh()}
+}catch(x){toast(em(x))}finally{b.disabled=false}});
+
+const dig=s=>String(s||'').replace(/[\u0660-\u0669]/g,c=>c.charCodeAt(0)-1632).replace(/[\u06F0-\u06F9]/g,c=>c.charCodeAt(0)-1776);
+document.addEventListener('submit',async e=>{e.preventDefault();const f=e.target,k=f.dataset.f,v=Object.fromEntries(new FormData(f));const sbn=f.querySelector('button.p');if(sbn)sbn.disabled=true;
+const err=m=>{toast(m);let b=f.querySelector('.err');if(!b){b=document.createElement('div');b.className='err';f.prepend(b)}b.textContent=m};
+try{
+if(k==='login'){const r=await sb.auth.signInWithPassword({email:v.email.trim(),password:v.password});if(r.error)return err(em(r.error));return}
+if(k==='signup'){if(!/^(?=.*\d)(?=.*\D).{8,64}$/.test(v.password))return err('كلمة المرور: 8 أحرف على الأقل وتحتوي حروفًا وأرقامًا');const r=await sb.auth.signUp({email:v.email.trim(),password:v.password,options:{emailRedirectTo:location.origin+location.pathname}});if(r.error)return err(em(r.error));if(!r.data.session){view='login';render();return toast('تم! افتح بريدك واضغط على رابط التفعيل، ثم سجّل الدخول')}return}
+if(k==='search'){D.q={from:v.from,to:v.to,day:v.day};return refresh()}
+if(k==='trip'){const t=new Date(v.t);if(isNaN(t))return err('موعد غير صحيح');const r=await sb.rpc('create_trip',{p_from:v.from,p_to:v.to,p_at:t.toISOString(),p_seats:Math.min(40,Math.max(1,parseInt(v.seats)||1))});if(r.error)return err(em(r.error));toast('تم نشر الرحلة ✓');return go('mine')}
+if(k==='profile'){const nid=dig(v.nid).replace(/[\s\-]/g,''),phone=dig(v.phone).replace(/[\s\-]/g,'').replace(/^(\+|00)?20(1\d{9})$/,'0$2'),name=(v.name||'').trim(),d=pr==='driver';
+if(!/^\d{14}$/.test(nid))return err('رقم البطاقة يجب أن يكون 14 رقم');if(!/^01[0125]\d{8}$/.test(phone))return err('رقم الموبايل غير صحيح');if(name.length<3||name.length>60)return err('الاسم غير صالح');if(d&&!(v.plate||'').trim())return err('أدخل رقم اللوحة');
+toast('جارٍ الحفظ…');const photo=f.ph.files[0]?await up('avatars','a',f.ph.files[0]):null;let idp,lic;if(d){idp=await up('driver-docs','id',f.idp.files[0]);lic=await up('driver-docs','lic',f.lic.files[0])}
+const r=await sb.rpc('register_profile',{p_role:pr,p_name:name,p_phone:phone,p_gender:d?null:v.g,p_plate:d?v.plate.trim():null,p_nid:nid,p_photo:photo});if(r.error)return err(em(r.error));
+if(d){const x=await sb.from('driver_docs').insert({driver_id:U.id,id_path:idp,license_path:lic});if(x.error)toast('تم الحساب، لكن تعذّر رفع الوثائق. تواصل مع الدعم')}
+view='main';toast('تم إنشاء الحساب ✓');return boot()}
+}catch(x){err(em(x))}finally{if(sbn)sbn.disabled=false}});
+render();
+
+</script></body></html>
